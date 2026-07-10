@@ -2,31 +2,161 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>달걀 시바의 방</title>
+<title>과학시간!</title>
 
 <style>
-body{
+html,body{
     margin:0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    background:#111;
+    overflow:hidden;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,1);
 }
 
-.room{
-    width:1200px;
-    height:700px;
-    background:url("room-shiba-egg.jpg") center/cover no-repeat;
-    border-radius:20px;
-    box-shadow:0 0 40px rgba(0,0,0,.5);
+canvas{
+    position:absolute;
+    left:0;
+    top:0;
+}
+
+#title{
+    position:absolute;
+    left:0;
+    top:0;
+    color:black;
+    font-size:40px;
+    font-family:Arial;
+    font-weight:bold;
+    z-index:10;
+    user-select:none;
 }
 </style>
-
 </head>
 <body>
 
-<div class="room"></div>
+<div id="title">
+과학시간!<br>
+안녕하세요 이원근입니다 (-_-)
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+
+function resize(){
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+}
+resize();
+window.onresize=resize;
+
+const atoms=[];
+
+function createAtom(x,y,vx,vy){
+    atoms.push({
+        x,
+        y,
+        vx,
+        vy,
+        r:8
+    });
+}
+
+createAtom(
+    canvas.width/2,
+    canvas.height/2,
+    3,
+    2
+);
+
+function drawAtom(a){
+
+    // 전자궤도
+    ctx.strokeStyle="#00ff00";
+    ctx.beginPath();
+    ctx.ellipse(a.x,a.y,18,8,0,0,Math.PI*2);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.ellipse(a.x,a.y,8,18,0,0,Math.PI*2);
+    ctx.stroke();
+
+    // 원자핵
+    ctx.fillStyle="#00ff00";
+    ctx.beginPath();
+    ctx.arc(a.x,a.y,a.r,0,Math.PI*2);
+    ctx.fill();
+}
+
+function split(atom){
+
+    if(atoms.length>300) return;
+
+    createAtom(
+        atom.x,
+        atom.y,
+        (Math.random()-0.5)*8,
+        (Math.random()-0.5)*8
+    );
+}
+
+function update(){
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    for(let atom of atoms){
+
+        atom.x+=atom.vx;
+        atom.y+=atom.vy;
+
+        if(atom.x<atom.r || atom.x>canvas.width-atom.r){
+            atom.vx*=-1;
+            split(atom);
+        }
+
+        if(atom.y<atom.r || atom.y>canvas.height-atom.r){
+            atom.vy*=-1;
+            split(atom);
+        }
+
+        drawAtom(atom);
+    }
+
+    // 서로 충돌하면 2배 생성
+    for(let i=0;i<atoms.length;i++){
+        for(let j=i+1;j<atoms.length;j++){
+
+            let a=atoms[i];
+            let b=atoms[j];
+
+            let dx=a.x-b.x;
+            let dy=a.y-b.y;
+            let d=Math.sqrt(dx*dx+dy*dy);
+
+            if(d<a.r+b.r){
+
+                split(a);
+                split(b);
+
+                let t=a.vx;
+                a.vx=b.vx;
+                b.vx=t;
+
+                t=a.vy;
+                a.vy=b.vy;
+                b.vy=t;
+            }
+        }
+    }
+
+    requestAnimationFrame(update);
+}
+
+update();
+
+</script>
 
 </body>
 </html>
