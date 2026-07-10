@@ -2,184 +2,250 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>과학시간!</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2030 Future</title>
 
 <style>
-html,body{
+*{
     margin:0;
-    width:100%;
-    height:100%;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#050505;
     overflow:hidden;
-    background:#ffffff;
+    color:white;
 }
 
 canvas{
-    position:absolute;
-    left:0;
+    position:fixed;
     top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:-2;
 }
 
-#title{
-    position:absolute;
-    left:0;
-    top:0;
-    color:black;
-    font-size:40px;
-    font-family:Arial,sans-serif;
-    font-weight:bold;
-    z-index:100;
-    user-select:none;
+.background{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:
+    radial-gradient(circle at 20% 20%,rgba(0,255,255,.12),transparent 40%),
+    radial-gradient(circle at 80% 80%,rgba(180,0,255,.12),transparent 40%),
+    radial-gradient(circle at 50% 50%,rgba(255,255,255,.03),transparent 50%);
+    animation:bgMove 12s linear infinite alternate;
+    z-index:-1;
+}
+
+@keyframes bgMove{
+    from{
+        transform:scale(1) rotate(0deg);
+    }
+    to{
+        transform:scale(1.2) rotate(4deg);
+    }
+}
+
+.container{
+    width:100%;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.card{
+    width:700px;
+    max-width:90%;
+    padding:60px;
+    text-align:center;
+
+    background:rgba(255,255,255,.05);
+
+    backdrop-filter:blur(25px);
+
+    border:1px solid rgba(255,255,255,.1);
+
+    border-radius:30px;
+
+    box-shadow:
+    0 0 40px rgba(0,255,255,.15),
+    0 0 80px rgba(180,0,255,.15);
+
+    animation:float 5s ease-in-out infinite;
+}
+
+@keyframes float{
+    0%,100%{
+        transform:translateY(0px);
+    }
+    50%{
+        transform:translateY(-15px);
+    }
+}
+
+h1{
+    font-size:70px;
+    background:linear-gradient(90deg,#00eaff,#9d4dff,#00eaff);
+    background-size:300%;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:gradient 5s linear infinite;
+}
+
+@keyframes gradient{
+    to{
+        background-position:300%;
+    }
+}
+
+p{
+    margin-top:20px;
+    color:#bdbdbd;
+    font-size:20px;
+    line-height:35px;
+}
+
+button{
+    margin-top:40px;
+    padding:18px 45px;
+    border:none;
+    border-radius:50px;
+    cursor:pointer;
+    color:white;
+    font-size:18px;
+    background:linear-gradient(90deg,#00d4ff,#7a00ff);
+    transition:.4s;
+}
+
+button:hover{
+    transform:scale(1.08);
+    box-shadow:0 0 35px cyan;
+}
+
+.line{
+    margin:35px auto;
+    width:220px;
+    height:2px;
+    background:linear-gradient(90deg,transparent,#00ffff,transparent);
 }
 </style>
 
 </head>
 <body>
 
-<div id="title">
-과학시간!<br>
-안녕하세요 이원근입니다 (-_-)
-</div>
-
 <canvas id="canvas"></canvas>
 
+<div class="background"></div>
+
+<div class="container">
+
+<div class="card">
+
+<h1>2030</h1>
+
+<div class="line"></div>
+
+<p>
+WELCOME TO THE FUTURE<br>
+NEXT GENERATION INTERFACE
+</p>
+
+<button onclick="alert('Welcome to 2030')">
+ENTER
+</button>
+
+</div>
+
+</div>
+
 <script>
+
 const canvas=document.getElementById("canvas");
 const ctx=canvas.getContext("2d");
 
 function resize(){
-    canvas.width=window.innerWidth;
-    canvas.height=window.innerHeight;
+canvas.width=innerWidth;
+canvas.height=innerHeight;
 }
 resize();
-window.onresize=resize;
+addEventListener("resize",resize);
 
-const atoms=[];
-const MAX_ATOMS=1000;
+let particles=[];
 
-function random(min,max){
-    return Math.random()*(max-min)+min;
+for(let i=0;i<170;i++){
+
+particles.push({
+
+x:Math.random()*canvas.width,
+
+y:Math.random()*canvas.height,
+
+vx:(Math.random()-0.5)*0.6,
+
+vy:(Math.random()-0.5)*0.6,
+
+r:Math.random()*2+1
+
+});
+
 }
 
-function createAtom(x,y,vx,vy){
-    if(atoms.length>=MAX_ATOMS) return;
+function animate(){
 
-    atoms.push({
-        x:x,
-        y:y,
-        vx:vx,
-        vy:vy,
-        r:8
-    });
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+particles.forEach(p=>{
+
+p.x+=p.vx;
+p.y+=p.vy;
+
+if(p.x<0||p.x>canvas.width)p.vx*=-1;
+if(p.y<0||p.y>canvas.height)p.vy*=-1;
+
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+
+ctx.fillStyle="rgba(0,255,255,.8)";
+ctx.fill();
+
+});
+
+for(let i=0;i<particles.length;i++){
+
+for(let j=i+1;j<particles.length;j++){
+
+let dx=particles[i].x-particles[j].x;
+let dy=particles[i].y-particles[j].y;
+let dist=Math.sqrt(dx*dx+dy*dy);
+
+if(dist<120){
+
+ctx.strokeStyle="rgba(0,255,255,"+(1-dist/120)/4+")";
+
+ctx.beginPath();
+
+ctx.moveTo(particles[i].x,particles[i].y);
+
+ctx.lineTo(particles[j].x,particles[j].y);
+
+ctx.stroke();
+
 }
 
-// 새로고침마다 랜덤한 시작 원자(1~10개)
-const startCount=Math.floor(Math.random()*10)+1;
-
-for(let i=0;i<startCount;i++){
-    createAtom(
-        random(20,window.innerWidth-20),
-        random(20,window.innerHeight-20),
-        random(-4,4),
-        random(-4,4)
-    );
 }
 
-function split(atom){
-    if(atoms.length>=MAX_ATOMS) return;
-
-    createAtom(
-        atom.x,
-        atom.y,
-        random(-5,5),
-        random(-5,5)
-    );
 }
 
-function drawAtom(a){
+requestAnimationFrame(animate);
 
-    ctx.strokeStyle="#00aa00";
-    ctx.lineWidth=2;
-
-    ctx.beginPath();
-    ctx.ellipse(a.x,a.y,18,8,0,0,Math.PI*2);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.ellipse(a.x,a.y,8,18,0,0,Math.PI*2);
-    ctx.stroke();
-
-    ctx.fillStyle="#00cc00";
-    ctx.beginPath();
-    ctx.arc(a.x,a.y,a.r,0,Math.PI*2);
-    ctx.fill();
 }
 
-function update(){
+animate();
 
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    for(let atom of atoms){
-
-        atom.x+=atom.vx;
-        atom.y+=atom.vy;
-
-        if(atom.x<atom.r){
-            atom.x=atom.r;
-            atom.vx*=-1;
-            split(atom);
-        }
-
-        if(atom.x>canvas.width-atom.r){
-            atom.x=canvas.width-atom.r;
-            atom.vx*=-1;
-            split(atom);
-        }
-
-        if(atom.y<atom.r){
-            atom.y=atom.r;
-            atom.vy*=-1;
-            split(atom);
-        }
-
-        if(atom.y>canvas.height-atom.r){
-            atom.y=canvas.height-atom.r;
-            atom.vy*=-1;
-            split(atom);
-        }
-
-        drawAtom(atom);
-    }
-
-    for(let i=0;i<atoms.length;i++){
-        for(let j=i+1;j<atoms.length;j++){
-
-            const a=atoms[i];
-            const b=atoms[j];
-
-            const dx=a.x-b.x;
-            const dy=a.y-b.y;
-            const d=Math.sqrt(dx*dx+dy*dy);
-
-            if(d<a.r+b.r){
-
-                split(a);
-                split(b);
-
-                let tx=a.vx;
-                a.vx=b.vx;
-                b.vx=tx;
-
-                let ty=a.vy;
-                a.vy=b.vy;
-                b.vy=ty;
-            }
-        }
-    }
-
-    requestAnimationFrame(update);
-}
-
-update();
 </script>
 
 </body>
