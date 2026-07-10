@@ -3,134 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2030 Future</title>
+<title>Summer Forest</title>
 
 <style>
-*{
+html,body{
     margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
-}
-
-body{
-    background:#050505;
     overflow:hidden;
-    color:white;
+    width:100%;
+    height:100%;
 }
 
 canvas{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    z-index:-2;
-}
-
-.background{
-    position:fixed;
-    width:100%;
-    height:100%;
-    background:
-    radial-gradient(circle at 20% 20%,rgba(0,255,255,.12),transparent 40%),
-    radial-gradient(circle at 80% 80%,rgba(180,0,255,.12),transparent 40%),
-    radial-gradient(circle at 50% 50%,rgba(255,255,255,.03),transparent 50%);
-    animation:bgMove 12s linear infinite alternate;
-    z-index:-1;
-}
-
-@keyframes bgMove{
-    from{
-        transform:scale(1) rotate(0deg);
-    }
-    to{
-        transform:scale(1.2) rotate(4deg);
-    }
-}
-
-.container{
-    width:100%;
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-
-.card{
-    width:700px;
-    max-width:90%;
-    padding:60px;
-    text-align:center;
-
-    background:rgba(255,255,255,.05);
-
-    backdrop-filter:blur(25px);
-
-    border:1px solid rgba(255,255,255,.1);
-
-    border-radius:30px;
-
-    box-shadow:
-    0 0 40px rgba(0,255,255,.15),
-    0 0 80px rgba(180,0,255,.15);
-
-    animation:float 5s ease-in-out infinite;
-}
-
-@keyframes float{
-    0%,100%{
-        transform:translateY(0px);
-    }
-    50%{
-        transform:translateY(-15px);
-    }
-}
-
-h1{
-    font-size:70px;
-    background:linear-gradient(90deg,#00eaff,#9d4dff,#00eaff);
-    background-size:300%;
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-    animation:gradient 5s linear infinite;
-}
-
-@keyframes gradient{
-    to{
-        background-position:300%;
-    }
-}
-
-p{
-    margin-top:20px;
-    color:#bdbdbd;
-    font-size:20px;
-    line-height:35px;
-}
-
-button{
-    margin-top:40px;
-    padding:18px 45px;
-    border:none;
-    border-radius:50px;
-    cursor:pointer;
-    color:white;
-    font-size:18px;
-    background:linear-gradient(90deg,#00d4ff,#7a00ff);
-    transition:.4s;
-}
-
-button:hover{
-    transform:scale(1.08);
-    box-shadow:0 0 35px cyan;
-}
-
-.line{
-    margin:35px auto;
-    width:220px;
-    height:2px;
-    background:linear-gradient(90deg,transparent,#00ffff,transparent);
+    display:block;
 }
 </style>
 
@@ -139,112 +23,216 @@ button:hover{
 
 <canvas id="canvas"></canvas>
 
-<div class="background"></div>
-
-<div class="container">
-
-<div class="card">
-
-<h1>2030</h1>
-
-<div class="line"></div>
-
-<p>
-WELCOME TO THE FUTURE<br>
-NEXT GENERATION INTERFACE
-</p>
-
-<button onclick="alert('Welcome to 2030')">
-ENTER
-</button>
-
-</div>
-
-</div>
-
 <script>
 
 const canvas=document.getElementById("canvas");
 const ctx=canvas.getContext("2d");
 
 function resize(){
-canvas.width=innerWidth;
-canvas.height=innerHeight;
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
 }
+window.addEventListener("resize",resize);
 resize();
-addEventListener("resize",resize);
 
-let particles=[];
+const trees=[];
+const leaves=[];
 
-for(let i=0;i<170;i++){
+for(let i=0;i<15;i++){
 
-particles.push({
-
-x:Math.random()*canvas.width,
-
-y:Math.random()*canvas.height,
-
-vx:(Math.random()-0.5)*0.6,
-
-vy:(Math.random()-0.5)*0.6,
-
-r:Math.random()*2+1
-
-});
+    trees.push({
+        x:i*(canvas.width/14),
+        h:180+Math.random()*120,
+        w:18+Math.random()*8,
+        p:Math.random()*6
+    });
 
 }
 
-function animate(){
+for(let i=0;i<300;i++){
+
+    leaves.push({
+
+        x:Math.random()*canvas.width,
+        y:Math.random()*canvas.height,
+
+        s:1+Math.random()*3,
+
+        vx:(Math.random()-0.5)*0.5,
+        vy:0.3+Math.random()*0.4,
+
+        a:Math.random()*6
+
+    });
+
+}
+
+let time=0;
+
+function draw(){
+
+time+=0.01;
 
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
-particles.forEach(p=>{
+const sky=ctx.createLinearGradient(0,0,0,canvas.height);
 
-p.x+=p.vx;
-p.y+=p.vy;
+sky.addColorStop(0,"#87d8ff");
+sky.addColorStop(.5,"#dff8ff");
+sky.addColorStop(1,"#5db75b");
 
-if(p.x<0||p.x>canvas.width)p.vx*=-1;
-if(p.y<0||p.y>canvas.height)p.vy*=-1;
+ctx.fillStyle=sky;
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+// 햇빛
+
+const sun=ctx.createRadialGradient(120,120,20,120,120,220);
+
+sun.addColorStop(0,"rgba(255,255,220,1)");
+sun.addColorStop(.5,"rgba(255,240,180,.5)");
+sun.addColorStop(1,"rgba(255,255,255,0)");
+
+ctx.fillStyle=sun;
+ctx.fillRect(0,0,450,450);
+
+// God Rays
+
+for(let i=0;i<8;i++){
+
+ctx.save();
+
+ctx.translate(60+i*70,0);
+
+ctx.rotate(0.2+Math.sin(time+i)*0.04);
+
+ctx.fillStyle="rgba(255,255,200,0.08)";
+
+ctx.fillRect(-35,0,70,canvas.height);
+
+ctx.restore();
+
+}
+
+// 나무
+
+trees.forEach(tree=>{
+
+let sway=Math.sin(time+tree.p)*8;
+
+ctx.strokeStyle="#5d3c22";
+
+ctx.lineWidth=tree.w;
 
 ctx.beginPath();
-ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
 
-ctx.fillStyle="rgba(0,255,255,.8)";
+ctx.moveTo(tree.x,canvas.height);
+
+ctx.quadraticCurveTo(
+
+tree.x+sway,
+
+canvas.height-tree.h/2,
+
+tree.x+sway,
+
+canvas.height-tree.h
+
+);
+
+ctx.stroke();
+
+ctx.fillStyle="#3d8b34";
+
+for(let i=0;i<45;i++){
+
+let angle=i/45*Math.PI*2;
+
+let rx=Math.cos(angle)*45;
+
+let ry=Math.sin(angle)*35;
+
+ctx.beginPath();
+
+ctx.arc(
+
+tree.x+sway+rx,
+
+canvas.height-tree.h+ry+Math.sin(time*2+i)*3,
+
+10,
+
+0,
+
+Math.PI*2
+
+);
+
+ctx.fill();
+
+}
+
+});
+
+// 날리는 잎
+
+ctx.fillStyle="#4caf50";
+
+leaves.forEach(l=>{
+
+l.x+=l.vx+Math.sin(time+l.a)*0.3;
+l.y+=l.vy;
+
+if(l.y>canvas.height){
+
+l.y=-10;
+l.x=Math.random()*canvas.width;
+
+}
+
+ctx.beginPath();
+
+ctx.ellipse(
+
+l.x,
+l.y,
+
+l.s*2,
+l.s,
+
+Math.sin(time+l.a),
+
+0,
+Math.PI*2
+
+);
+
 ctx.fill();
 
 });
 
-for(let i=0;i<particles.length;i++){
+// 바닥
 
-for(let j=i+1;j<particles.length;j++){
+ctx.fillStyle="#3c8c35";
 
-let dx=particles[i].x-particles[j].x;
-let dy=particles[i].y-particles[j].y;
-let dist=Math.sqrt(dx*dx+dy*dy);
+ctx.fillRect(0,canvas.height-80,canvas.width,80);
 
-if(dist<120){
+// 풀
 
-ctx.strokeStyle="rgba(0,255,255,"+(1-dist/120)/4+")";
+ctx.fillStyle="#4CAF50";
 
-ctx.beginPath();
+for(let x=0;x<canvas.width;x+=4){
 
-ctx.moveTo(particles[i].x,particles[i].y);
+let h=15+Math.sin(x*0.03+time*4)*8;
 
-ctx.lineTo(particles[j].x,particles[j].y);
-
-ctx.stroke();
+ctx.fillRect(x,canvas.height-h,2,h);
 
 }
 
-}
+requestAnimationFrame(draw);
 
 }
 
-requestAnimationFrame(animate);
-
-}
-
-animate();
+draw();
 
 </script>
 
