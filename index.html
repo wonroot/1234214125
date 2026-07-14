@@ -3,237 +3,132 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Summer Forest</title>
+<title>달걀 시바의 방</title>
 
 <style>
-html,body{
+*{
     margin:0;
-    overflow:hidden;
-    width:100%;
-    height:100%;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"맑은 고딕",sans-serif;
 }
 
-canvas{
-    display:block;
+body{
+    background:#f5f5f5;
+    overflow:hidden;
+}
+
+/* 왼쪽 위 메뉴 */
+.menu{
+    position:fixed;
+    top:20px;
+    left:20px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.menu button{
+    width:120px;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    background:white;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:bold;
+    transition:.2s;
+    box-shadow:0 4px 10px rgba(0,0,0,.15);
+}
+
+.menu button:hover{
+    background:#ffe082;
+    transform:translateX(5px);
+}
+
+/* 가운데 */
+.container{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+}
+
+h1{
+    font-size:48px;
+    margin-bottom:30px;
+    color:#333;
+}
+
+/* 달걀 시바 */
+.shiba{
+    width:250px;
+    height:250px;
+    object-fit:contain;
+    margin-bottom:30px;
+}
+
+.emoji{
+    font-size:180px;
+    margin-bottom:30px;
+}
+
+/* 시작 버튼 */
+.start{
+    padding:18px 60px;
+    font-size:28px;
+    border:none;
+    border-radius:50px;
+    background:#ff9800;
+    color:white;
+    cursor:pointer;
+    transition:.2s;
+    box-shadow:0 8px 20px rgba(0,0,0,.2);
+}
+
+.start:hover{
+    transform:scale(1.08);
+    background:#ff6f00;
 }
 </style>
 
 </head>
 <body>
 
-<canvas id="canvas"></canvas>
+<!-- 왼쪽 위 메뉴 -->
+<div class="menu">
+    <button>1단원</button>
+    <button>2단원</button>
+    <button>3단원</button>
+    <button>4단원</button>
+    <button>5단원</button>
+    <button>6단원</button>
+    <button>7단원</button>
+    <button>8단원</button>
+</div>
+
+<!-- 메인 -->
+<div class="container">
+
+    <h1>달걀 시바의 방입니다</h1>
+
+    <!-- 이미지가 있으면 표시 -->
+    <img src="egg-shiba.png"
+         class="shiba"
+         onerror="this.style.display='none';document.getElementById('emoji').style.display='block';">
+
+    <!-- 이미지가 없으면 이모지 -->
+    <div id="emoji" class="emoji" style="display:none;">🥚🐕</div>
+
+    <button class="start" onclick="start()">시작하기</button>
+
+</div>
 
 <script>
-
-const canvas=document.getElementById("canvas");
-const ctx=canvas.getContext("2d");
-
-function resize(){
-    canvas.width=window.innerWidth;
-    canvas.height=window.innerHeight;
+function start(){
+    alert("시작합니다!");
 }
-window.addEventListener("resize",resize);
-resize();
-
-const trees=[];
-const leaves=[];
-
-for(let i=0;i<15;i++){
-
-    trees.push({
-        x:i*(canvas.width/14),
-        h:180+Math.random()*120,
-        w:18+Math.random()*8,
-        p:Math.random()*6
-    });
-
-}
-
-for(let i=0;i<300;i++){
-
-    leaves.push({
-
-        x:Math.random()*canvas.width,
-        y:Math.random()*canvas.height,
-
-        s:1+Math.random()*3,
-
-        vx:(Math.random()-0.5)*0.5,
-        vy:0.3+Math.random()*0.4,
-
-        a:Math.random()*6
-
-    });
-
-}
-
-let time=0;
-
-function draw(){
-
-time+=0.01;
-
-ctx.clearRect(0,0,canvas.width,canvas.height);
-
-const sky=ctx.createLinearGradient(0,0,0,canvas.height);
-
-sky.addColorStop(0,"#87d8ff");
-sky.addColorStop(.5,"#dff8ff");
-sky.addColorStop(1,"#5db75b");
-
-ctx.fillStyle=sky;
-ctx.fillRect(0,0,canvas.width,canvas.height);
-
-// 햇빛
-
-const sun=ctx.createRadialGradient(120,120,20,120,120,220);
-
-sun.addColorStop(0,"rgba(255,255,220,1)");
-sun.addColorStop(.5,"rgba(255,240,180,.5)");
-sun.addColorStop(1,"rgba(255,255,255,0)");
-
-ctx.fillStyle=sun;
-ctx.fillRect(0,0,450,450);
-
-// God Rays
-
-for(let i=0;i<8;i++){
-
-ctx.save();
-
-ctx.translate(60+i*70,0);
-
-ctx.rotate(0.2+Math.sin(time+i)*0.04);
-
-ctx.fillStyle="rgba(255,255,200,0.08)";
-
-ctx.fillRect(-35,0,70,canvas.height);
-
-ctx.restore();
-
-}
-
-// 나무
-
-trees.forEach(tree=>{
-
-let sway=Math.sin(time+tree.p)*8;
-
-ctx.strokeStyle="#5d3c22";
-
-ctx.lineWidth=tree.w;
-
-ctx.beginPath();
-
-ctx.moveTo(tree.x,canvas.height);
-
-ctx.quadraticCurveTo(
-
-tree.x+sway,
-
-canvas.height-tree.h/2,
-
-tree.x+sway,
-
-canvas.height-tree.h
-
-);
-
-ctx.stroke();
-
-ctx.fillStyle="#3d8b34";
-
-for(let i=0;i<45;i++){
-
-let angle=i/45*Math.PI*2;
-
-let rx=Math.cos(angle)*45;
-
-let ry=Math.sin(angle)*35;
-
-ctx.beginPath();
-
-ctx.arc(
-
-tree.x+sway+rx,
-
-canvas.height-tree.h+ry+Math.sin(time*2+i)*3,
-
-10,
-
-0,
-
-Math.PI*2
-
-);
-
-ctx.fill();
-
-}
-
-});
-
-// 날리는 잎
-
-ctx.fillStyle="#4caf50";
-
-leaves.forEach(l=>{
-
-l.x+=l.vx+Math.sin(time+l.a)*0.3;
-l.y+=l.vy;
-
-if(l.y>canvas.height){
-
-l.y=-10;
-l.x=Math.random()*canvas.width;
-
-}
-
-ctx.beginPath();
-
-ctx.ellipse(
-
-l.x,
-l.y,
-
-l.s*2,
-l.s,
-
-Math.sin(time+l.a),
-
-0,
-Math.PI*2
-
-);
-
-ctx.fill();
-
-});
-
-// 바닥
-
-ctx.fillStyle="#3c8c35";
-
-ctx.fillRect(0,canvas.height-80,canvas.width,80);
-
-// 풀
-
-ctx.fillStyle="#4CAF50";
-
-for(let x=0;x<canvas.width;x+=4){
-
-let h=15+Math.sin(x*0.03+time*4)*8;
-
-ctx.fillRect(x,canvas.height-h,2,h);
-
-}
-
-requestAnimationFrame(draw);
-
-}
-
-draw();
-
 </script>
 
 </body>
