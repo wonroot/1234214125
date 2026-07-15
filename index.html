@@ -1,258 +1,3 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>과학시간!</title>
-
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-html,body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:#000;
-    font-family:Arial,Helvetica,sans-serif;
-}
-
-canvas{
-    position:absolute;
-    inset:0;
-}
-
-#ui{
-    position:absolute;
-    width:100%;
-    text-align:center;
-    color:white;
-    z-index:100;
-    pointer-events:none;
-}
-
-#count{
-    margin-top:20px;
-    font-size:70px;
-    font-weight:bold;
-    text-shadow:0 0 20px white;
-}
-
-#title{
-    margin-top:10px;
-    font-size:42px;
-    text-shadow:0 0 15px white;
-    line-height:1.4;
-}
-
-</style>
-</head>
-<body>
-
-<canvas id="canvas"></canvas>
-
-<div id="ui">
-<div id="count">5</div>
-<div id="title">
-과학시간!<br>
-안녕하세요 이원근입니다 (-_-)
-</div>
-</div>
-
-<script>
-
-const canvas=document.getElementById("canvas");
-const ctx=canvas.getContext("2d");
-
-function resize(){
-    canvas.width=innerWidth;
-    canvas.height=innerHeight;
-}
-resize();
-addEventListener("resize",resize);
-
-const stars=[];
-
-for(let i=0;i<350;i++){
-    stars.push({
-        x:Math.random()*innerWidth,
-        y:Math.random()*innerHeight,
-        r:Math.random()*2,
-        a:Math.random(),
-        s:0.01+Math.random()*0.03
-    });
-}
-
-const sun={
-    x:110,
-    y:110,
-    r:45,
-    glow:0
-};
-
-let exploded=false;
-let beamLength=0;
-
-const particles=[];
-const atoms=[];
-
-const MAX_ATOMS=1000;
-
-function atom(x,y,vx,vy){
-
-    if(atoms.length>=MAX_ATOMS)return;
-
-    atoms.push({
-        x,
-        y,
-        vx,
-        vy,
-        orbit:Math.random()*360,
-        r:7
-    });
-
-}
-
-let countdown=5;
-
-const timer=setInterval(()=>{
-
-    countdown--;
-
-    document.getElementById("count").textContent=Math.max(countdown,0);
-
-    if(countdown<=0){
-
-        clearInterval(timer);
-
-        exploded=true;
-
-    }
-
-},1000);
-
-function drawBackground(){
-
-    let g=ctx.createLinearGradient(0,0,0,canvas.height);
-
-    g.addColorStop(0,"#02030f");
-    g.addColorStop(.5,"#071133");
-    g.addColorStop(1,"#000");
-
-    ctx.fillStyle=g;
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-}
-
-function drawStars(){
-
-    for(const s of stars){
-
-        s.a+=s.s;
-
-        if(s.a>1||s.a<0){
-
-            s.s*=-1;
-
-        }
-
-        ctx.beginPath();
-
-        ctx.fillStyle="rgba(255,255,255,"+Math.abs(s.a)+")";
-
-        ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-
-        ctx.fill();
-
-    }
-
-}
-
-function drawSun(){
-
-    ctx.save();
-
-    ctx.shadowColor="yellow";
-    ctx.shadowBlur=40+Math.sin(Date.now()/150)*10;
-
-    ctx.fillStyle="orange";
-
-    ctx.beginPath();
-
-    ctx.arc(sun.x,sun.y,sun.r,0,Math.PI*2);
-
-    ctx.fill();
-
-    ctx.restore();
-
-}
-
-function drawExplosion(){
-
-    sun.glow+=4;
-
-    ctx.save();
-
-    ctx.shadowColor="white";
-    ctx.shadowBlur=sun.glow;
-
-    ctx.fillStyle="white";
-
-    ctx.beginPath();
-
-    ctx.arc(sun.x,sun.y,sun.r+sun.glow,0,Math.PI*2);
-
-    ctx.fill();
-
-    ctx.restore();
-
-    if(beamLength<canvas.width){
-
-        beamLength+=18;
-
-    }
-
-    ctx.save();
-
-    ctx.lineWidth=10;
-
-    ctx.strokeStyle="rgba(255,255,120,.95)";
-
-    ctx.shadowBlur=30;
-
-    ctx.shadowColor="yellow";
-
-    ctx.beginPath();
-
-    ctx.moveTo(sun.x,sun.y);
-
-    ctx.lineTo(sun.x+beamLength,sun.y-beamLength*0.45);
-
-    ctx.stroke();
-
-    ctx.restore();
-
-    if(Math.random()<0.6){
-
-        let t=Math.random();
-
-        let bx=sun.x+t*beamLength;
-
-        let by=sun.y-t*(beamLength*0.45);
-
-        atom(
-            bx,
-            by,
-            (Math.random()-.5)*5,
-            (Math.random()-.5)*5
-        );
-
-    }
-
-}
 function drawAtoms(){
 
     for(const a of atoms){
@@ -389,3 +134,118 @@ animate();
 
 </body>
 </html>
+          function drawAtoms(){
+
+    for(const a of atoms){
+
+        a.x+=a.vx;
+        a.y+=a.vy;
+        a.orbit+=2;
+
+        // 벽에 닿으면 새로운 원자 생성
+        if(a.x<a.r){
+
+            a.x=a.r;
+            a.vx*=-1;
+
+            atom(
+                a.x,
+                a.y,
+                (Math.random()-0.5)*6,
+                (Math.random()-0.5)*6
+            );
+
+        }
+
+        if(a.x>canvas.width-a.r){
+
+            a.x=canvas.width-a.r;
+            a.vx*=-1;
+
+            atom(
+                a.x,
+                a.y,
+                (Math.random()-0.5)*6,
+                (Math.random()-0.5)*6
+            );
+
+        }
+
+        if(a.y<a.r){
+
+            a.y=a.r;
+            a.vy*=-1;
+
+            atom(
+                a.x,
+                a.y,
+                (Math.random()-0.5)*6,
+                (Math.random()-0.5)*6
+            );
+
+        }
+
+        if(a.y>canvas.height-a.r){
+
+            a.y=canvas.height-a.r;
+            a.vy*=-1;
+
+            atom(
+                a.x,
+                a.y,
+                (Math.random()-0.5)*6,
+                (Math.random()-0.5)*6
+            );
+
+        }
+
+        ctx.save();
+
+        ctx.translate(a.x,a.y);
+        ctx.rotate(a.orbit*Math.PI/180);
+
+        // 전자 궤도
+        ctx.strokeStyle="#00ff88";
+        ctx.lineWidth=2;
+
+        ctx.beginPath();
+        ctx.ellipse(0,0,18,7,0,0,Math.PI*2);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.ellipse(0,0,7,18,0,0,Math.PI*2);
+        ctx.stroke();
+
+        // 원자핵
+        ctx.shadowColor="#00ff88";
+        ctx.shadowBlur=12;
+        ctx.fillStyle="#7CFF00";
+
+        ctx.beginPath();
+        ctx.arc(0,0,6,0,Math.PI*2);
+        ctx.fill();
+
+        ctx.restore();
+
+    }
+
+}
+
+function animate(){
+
+    requestAnimationFrame(animate);
+
+    drawBackground();
+    drawStars();
+    drawSun();
+    drawBeam();
+    drawAtoms();
+
+}
+
+animate();
+
+</script>
+
+</body>
+</html>      
