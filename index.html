@@ -2,8 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Summer Forest</title>
+<title>과학시간!</title>
 
 <style>
 html,body{
@@ -11,20 +10,38 @@ html,body{
     overflow:hidden;
     width:100%;
     height:100%;
+    background:rgba(0,0,0,1);
 }
 
 canvas{
-    display:block;
+    position:absolute;
+    left:0;
+    top:0;
+}
+
+#title{
+    position:absolute;
+    left:0;
+    top:0;
+    color:black;
+    font-size:40px;
+    font-family:Arial;
+    font-weight:bold;
+    z-index:10;
+    user-select:none;
 }
 </style>
-
 </head>
 <body>
+
+<div id="title">
+과학시간!<br>
+안녕하세요 이원근입니다 (-_-)
+</div>
 
 <canvas id="canvas"></canvas>
 
 <script>
-
 const canvas=document.getElementById("canvas");
 const ctx=canvas.getContext("2d");
 
@@ -32,207 +49,112 @@ function resize(){
     canvas.width=window.innerWidth;
     canvas.height=window.innerHeight;
 }
-window.addEventListener("resize",resize);
 resize();
+window.onresize=resize;
 
-const trees=[];
-const leaves=[];
+const atoms=[];
 
-for(let i=0;i<15;i++){
-
-    trees.push({
-        x:i*(canvas.width/14),
-        h:180+Math.random()*120,
-        w:18+Math.random()*8,
-        p:Math.random()*6
+function createAtom(x,y,vx,vy){
+    atoms.push({
+        x,
+        y,
+        vx,
+        vy,
+        r:8
     });
-
 }
 
-for(let i=0;i<300;i++){
-
-    leaves.push({
-
-        x:Math.random()*canvas.width,
-        y:Math.random()*canvas.height,
-
-        s:1+Math.random()*3,
-
-        vx:(Math.random()-0.5)*0.5,
-        vy:0.3+Math.random()*0.4,
-
-        a:Math.random()*6
-
-    });
-
-}
-
-let time=0;
-
-function draw(){
-
-time+=0.01;
-
-ctx.clearRect(0,0,canvas.width,canvas.height);
-
-const sky=ctx.createLinearGradient(0,0,0,canvas.height);
-
-sky.addColorStop(0,"#87d8ff");
-sky.addColorStop(.5,"#dff8ff");
-sky.addColorStop(1,"#5db75b");
-
-ctx.fillStyle=sky;
-ctx.fillRect(0,0,canvas.width,canvas.height);
-
-// 햇빛
-
-const sun=ctx.createRadialGradient(120,120,20,120,120,220);
-
-sun.addColorStop(0,"rgba(255,255,220,1)");
-sun.addColorStop(.5,"rgba(255,240,180,.5)");
-sun.addColorStop(1,"rgba(255,255,255,0)");
-
-ctx.fillStyle=sun;
-ctx.fillRect(0,0,450,450);
-
-// God Rays
-
-for(let i=0;i<8;i++){
-
-ctx.save();
-
-ctx.translate(60+i*70,0);
-
-ctx.rotate(0.2+Math.sin(time+i)*0.04);
-
-ctx.fillStyle="rgba(255,255,200,0.08)";
-
-ctx.fillRect(-35,0,70,canvas.height);
-
-ctx.restore();
-
-}
-
-// 나무
-
-trees.forEach(tree=>{
-
-let sway=Math.sin(time+tree.p)*8;
-
-ctx.strokeStyle="#5d3c22";
-
-ctx.lineWidth=tree.w;
-
-ctx.beginPath();
-
-ctx.moveTo(tree.x,canvas.height);
-
-ctx.quadraticCurveTo(
-
-tree.x+sway,
-
-canvas.height-tree.h/2,
-
-tree.x+sway,
-
-canvas.height-tree.h
-
+createAtom(
+    canvas.width/2,
+    canvas.height/2,
+    3,
+    2
 );
 
-ctx.stroke();
+function drawAtom(a){
 
-ctx.fillStyle="#3d8b34";
+    // 전자궤도
+    ctx.strokeStyle="#00ff00";
+    ctx.beginPath();
+    ctx.ellipse(a.x,a.y,18,8,0,0,Math.PI*2);
+    ctx.stroke();
 
-for(let i=0;i<45;i++){
+    ctx.beginPath();
+    ctx.ellipse(a.x,a.y,8,18,0,0,Math.PI*2);
+    ctx.stroke();
 
-let angle=i/45*Math.PI*2;
-
-let rx=Math.cos(angle)*45;
-
-let ry=Math.sin(angle)*35;
-
-ctx.beginPath();
-
-ctx.arc(
-
-tree.x+sway+rx,
-
-canvas.height-tree.h+ry+Math.sin(time*2+i)*3,
-
-10,
-
-0,
-
-Math.PI*2
-
-);
-
-ctx.fill();
-
+    // 원자핵
+    ctx.fillStyle="#00ff00";
+    ctx.beginPath();
+    ctx.arc(a.x,a.y,a.r,0,Math.PI*2);
+    ctx.fill();
 }
 
-});
+function split(atom){
 
-// 날리는 잎
+    if(atoms.length>300) return;
 
-ctx.fillStyle="#4caf50";
-
-leaves.forEach(l=>{
-
-l.x+=l.vx+Math.sin(time+l.a)*0.3;
-l.y+=l.vy;
-
-if(l.y>canvas.height){
-
-l.y=-10;
-l.x=Math.random()*canvas.width;
-
+    createAtom(
+        atom.x,
+        atom.y,
+        (Math.random()-0.5)*8,
+        (Math.random()-0.5)*8
+    );
 }
 
-ctx.beginPath();
+function update(){
 
-ctx.ellipse(
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 
-l.x,
-l.y,
+    for(let atom of atoms){
 
-l.s*2,
-l.s,
+        atom.x+=atom.vx;
+        atom.y+=atom.vy;
 
-Math.sin(time+l.a),
+        if(atom.x<atom.r || atom.x>canvas.width-atom.r){
+            atom.vx*=-1;
+            split(atom);
+        }
 
-0,
-Math.PI*2
+        if(atom.y<atom.r || atom.y>canvas.height-atom.r){
+            atom.vy*=-1;
+            split(atom);
+        }
 
-);
+        drawAtom(atom);
+    }
 
-ctx.fill();
+    // 서로 충돌하면 2배 생성
+    for(let i=0;i<atoms.length;i++){
+        for(let j=i+1;j<atoms.length;j++){
 
-});
+            let a=atoms[i];
+            let b=atoms[j];
 
-// 바닥
+            let dx=a.x-b.x;
+            let dy=a.y-b.y;
+            let d=Math.sqrt(dx*dx+dy*dy);
 
-ctx.fillStyle="#3c8c35";
+            if(d<a.r+b.r){
 
-ctx.fillRect(0,canvas.height-80,canvas.width,80);
+                split(a);
+                split(b);
 
-// 풀
+                let t=a.vx;
+                a.vx=b.vx;
+                b.vx=t;
 
-ctx.fillStyle="#4CAF50";
+                t=a.vy;
+                a.vy=b.vy;
+                b.vy=t;
+            }
+        }
+    }
 
-for(let x=0;x<canvas.width;x+=4){
-
-let h=15+Math.sin(x*0.03+time*4)*8;
-
-ctx.fillRect(x,canvas.height-h,2,h);
-
+    requestAnimationFrame(update);
 }
 
-requestAnimationFrame(draw);
-
-}
-
-draw();
+update();
 
 </script>
 
