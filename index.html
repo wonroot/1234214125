@@ -526,3 +526,51 @@ chapter.style.display="block";
 
 </body>
 </html>
+let running = true;
+
+function animate(){
+
+    if(!running) return;
+
+    requestAnimationFrame(animate);
+
+    bg();
+    drawStars();
+    drawSun();
+    drawBeam();
+    drawAtoms();
+    drawWaves();
+
+}
+
+animate();
+
+const startBtn=document.getElementById("startBtn");
+const loading=document.getElementById("loading");
+const chapter=document.getElementById("chapter");
+
+startBtn.onclick=function(){
+
+    startBtn.style.display="none";
+    loading.style.display="block";
+
+    setTimeout(function(){
+
+        // ★ 모든 배경 애니메이션 정지
+        running=false;
+
+        // 캔버스 지우기
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+
+        // 캔버스 숨기기
+        canvas.style.display="none";
+
+        // 로딩 숨김
+        loading.style.display="none";
+
+        // 단원 목록만 표시
+        chapter.style.display="block";
+
+    },2000);
+
+};
