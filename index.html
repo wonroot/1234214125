@@ -11,7 +11,7 @@ html,body{
 width:100%;
 height:100%;
 overflow:hidden;
-background:#02030d;
+background:#02030f;
 font-family:Arial,sans-serif;
 }
 canvas{
@@ -21,33 +21,36 @@ top:0;
 }
 #ui{
 position:absolute;
+left:0;
+top:0;
 width:100%;
 text-align:center;
-color:#fff;
+color:white;
 pointer-events:none;
 z-index:10;
 }
 #count{
-margin-top:20px;
+margin-top:15px;
 font-size:70px;
 font-weight:bold;
-text-shadow:0 0 20px #fff;
+text-shadow:0 0 20px white;
 }
 #title{
 margin-top:10px;
-font-size:42px;
+font-size:40px;
 line-height:1.5;
-text-shadow:0 0 15px #8ab6ff;
+text-shadow:0 0 15px #7fb4ff;
 }
 </style>
-
 </head>
+
 <body>
 
-<canvas id="c"></canvas>
+<canvas id="canvas"></canvas>
 
 <div id="ui">
 <div id="count">5</div>
+
 <div id="title">
 과학시간!<br>
 안녕하세요 이원근입니다 (-_-)
@@ -56,21 +59,21 @@ text-shadow:0 0 15px #8ab6ff;
 
 <script>
 
-const c=document.getElementById("c");
-const x=c.getContext("2d");
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
 
 function resize(){
-c.width=innerWidth;
-c.height=innerHeight;
+canvas.width=innerWidth;
+canvas.height=innerHeight;
 }
 resize();
 addEventListener("resize",resize);
 
 const stars=[];
-const waves=[];
 const atoms=[];
+const waves=[];
 
-const MAX=300;
+const MAX_ATOMS=300;
 
 const sun={
 x:120,
@@ -87,9 +90,9 @@ stars.push({
 
 x:Math.random()*innerWidth,
 y:Math.random()*innerHeight,
-r:Math.random()*2+0.5,
+r:Math.random()*2+0.3,
 a:Math.random(),
-s:0.01+Math.random()*0.03
+v:0.01+Math.random()*0.03
 
 });
 
@@ -113,10 +116,12 @@ for(let i=0;i<6;i++){
 
 atoms.push({
 
-x:sun.x+Math.random()*20,
-y:sun.y+Math.random()*20,
-vx:4+Math.random()*2,
-vy:4+Math.random()*2,
+x:sun.x,
+y:sun.y,
+
+vx:5,
+vy:5,
+
 rot:Math.random()*360
 
 });
@@ -127,7 +132,7 @@ rot:Math.random()*360
 
 },1000);
 
-c.onclick=e=>{
+canvas.onclick=e=>{
 
 waves.push({
 
@@ -140,16 +145,16 @@ a:1
 
 };
 
-function bg(){
+function drawBackground(){
 
-let g=x.createLinearGradient(0,0,0,c.height);
+let g=ctx.createLinearGradient(0,0,0,canvas.height);
 
 g.addColorStop(0,"#000814");
-g.addColorStop(.5,"#08163d");
+g.addColorStop(.45,"#081742");
 g.addColorStop(1,"#000");
 
-x.fillStyle=g;
-x.fillRect(0,0,c.width,c.height);
+ctx.fillStyle=g;
+ctx.fillRect(0,0,canvas.width,canvas.height);
 
 }
 
@@ -157,14 +162,14 @@ function drawStars(){
 
 for(const s of stars){
 
-s.a+=s.s;
+s.a+=s.v;
 
-if(s.a>1||s.a<0)s.s*=-1;
+if(s.a>1||s.a<0)s.v*=-1;
 
-x.beginPath();
-x.fillStyle=`rgba(255,255,255,${Math.abs(s.a)})`;
-x.arc(s.x,s.y,s.r,0,Math.PI*2);
-x.fill();
+ctx.beginPath();
+ctx.fillStyle=`rgba(255,255,255,${Math.abs(s.a)})`;
+ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+ctx.fill();
 
 }
 
@@ -172,18 +177,18 @@ x.fill();
 
 function drawSun(){
 
-x.save();
+ctx.save();
 
-x.shadowColor="#FFD000";
-x.shadowBlur=60;
+ctx.shadowColor="#FFD400";
+ctx.shadowBlur=70;
 
-x.fillStyle="#FFD633";
+ctx.fillStyle="#FFD43B";
 
-x.beginPath();
-x.arc(sun.x,sun.y,sun.r,0,Math.PI*2);
-x.fill();
+ctx.beginPath();
+ctx.arc(sun.x,sun.y,sun.r,0,Math.PI*2);
+ctx.fill();
 
-x.restore();
+ctx.restore();
 
 }
 
@@ -191,54 +196,135 @@ function drawBeam(){
 
 if(!beam)return;
 
-if(beamLength<c.width)beamLength+=25;
+if(beamLength<canvas.width)
+beamLength+=25;
 
-x.save();
+ctx.save();
 
-x.lineCap="round";
-x.shadowBlur=120;
-x.shadowColor="#7b5cff";
+ctx.lineCap="round";
+ctx.shadowBlur=120;
+ctx.shadowColor="#6f63ff";
 
-/* 바깥 */
-
-x.lineWidth=90;
-x.strokeStyle="rgba(120,80,255,.15)";
-x.beginPath();
-x.moveTo(sun.x,sun.y);
-x.lineTo(
+ctx.lineWidth=90;
+ctx.strokeStyle="rgba(150,90,255,.18)";
+ctx.beginPath();
+ctx.moveTo(sun.x,sun.y);
+ctx.lineTo(
 sun.x+beamLength,
-sun.y+beamLength*0.6
+sun.y+beamLength
 );
-x.stroke();
+ctx.stroke();
 
-/* 중간 */
-
-x.lineWidth=50;
-x.strokeStyle="rgba(70,170,255,.55)";
-x.beginPath();
-x.moveTo(sun.x,sun.y);
-x.lineTo(
+ctx.lineWidth=55;
+ctx.strokeStyle="rgba(80,170,255,.55)";
+ctx.beginPath();
+ctx.moveTo(sun.x,sun.y);
+ctx.lineTo(
 sun.x+beamLength,
-sun.y+beamLength*0.6
+sun.y+beamLength
 );
-x.stroke();
+ctx.stroke();
 
-/* 중심 */
-
-x.lineWidth=20;
-x.strokeStyle="#dfe8ff";
-x.beginPath();
-x.moveTo(sun.x,sun.y);
-x.lineTo(
+ctx.lineWidth=22;
+ctx.strokeStyle="#e5eeff";
+ctx.beginPath();
+ctx.moveTo(sun.x,sun.y);
+ctx.lineTo(
 sun.x+beamLength,
-sun.y+beamLength*0.6
+sun.y+beamLength
 );
-x.stroke();
+ctx.stroke();
 
-x.restore();
+ctx.restore();
 
 }
-    function drawWaves(){
+function drawAtoms(){
+
+    for(let i=atoms.length-1;i>=0;i--){
+
+        const a=atoms[i];
+
+        a.x+=a.vx;
+        a.y+=a.vy;
+        a.rot+=4;
+
+        let hit=false;
+
+        // 좌우 벽
+        if(a.x<=8){
+            a.x=8;
+            a.vx=Math.abs(a.vx);
+            hit=true;
+        }
+
+        if(a.x>=canvas.width-8){
+            a.x=canvas.width-8;
+            a.vx=-Math.abs(a.vx);
+            hit=true;
+        }
+
+        // 상하 벽
+        if(a.y<=8){
+            a.y=8;
+            a.vy=Math.abs(a.vy);
+            hit=true;
+        }
+
+        if(a.y>=canvas.height-8){
+            a.y=canvas.height-8;
+            a.vy=-Math.abs(a.vy);
+            hit=true;
+        }
+
+        // 벽에 닿으면 새 원자 생성
+        if(hit && atoms.length<MAX_ATOMS){
+
+            atoms.push({
+
+                x:a.x,
+                y:a.y,
+
+                // 새 원자는 항상 ↘ 방향으로 출발
+                vx:5,
+                vy:5,
+
+                rot:0
+
+            });
+
+        }
+
+        ctx.save();
+
+        ctx.translate(a.x,a.y);
+        ctx.rotate(a.rot*Math.PI/180);
+
+        ctx.shadowColor="#6CFF88";
+        ctx.shadowBlur=12;
+
+        ctx.strokeStyle="#00FF99";
+        ctx.lineWidth=2;
+
+        ctx.beginPath();
+        ctx.ellipse(0,0,18,7,0,0,Math.PI*2);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.ellipse(0,0,7,18,0,0,Math.PI*2);
+        ctx.stroke();
+
+        ctx.fillStyle="#AAFF33";
+        ctx.beginPath();
+        ctx.arc(0,0,5,0,Math.PI*2);
+        ctx.fill();
+
+        ctx.restore();
+
+    }
+
+}
+
+function drawWaves(){
 
     for(let i=waves.length-1;i>=0;i--){
 
@@ -247,14 +333,14 @@ x.restore();
         w.r+=10;
         w.a-=0.02;
 
-        x.beginPath();
-        x.arc(w.x,w.y,w.r,0,Math.PI*2);
+        ctx.beginPath();
+        ctx.arc(w.x,w.y,w.r,0,Math.PI*2);
 
-        x.lineWidth=8;
-        x.strokeStyle=`rgba(80,180,255,${w.a})`;
-        x.shadowColor="#55AAFF";
-        x.shadowBlur=30;
-        x.stroke();
+        ctx.lineWidth=8;
+        ctx.strokeStyle=`rgba(80,180,255,${w.a})`;
+        ctx.shadowColor="#55AAFF";
+        ctx.shadowBlur=30;
+        ctx.stroke();
 
         if(w.a<=0){
             waves.splice(i,1);
@@ -264,90 +350,11 @@ x.restore();
 
 }
 
-function drawAtoms(){
+function animate(){
 
-    for(const a of atoms){
+    requestAnimationFrame(animate);
 
-        a.x+=a.vx;
-        a.y+=a.vy;
-        a.rot+=3;
-
-        // 벽 충돌 → 새 원자 생성
-        if(a.x<8||a.x>c.width-8){
-
-            a.vx*=-1;
-
-            if(atoms.length<MAX){
-
-                atoms.push({
-
-                    x:a.x,
-                    y:a.y,
-                    vx:4+Math.random()*2,
-                    vy:4+Math.random()*2,
-                    rot:0
-
-                });
-
-            }
-
-        }
-
-        if(a.y<8||a.y>c.height-8){
-
-            a.vy*=-1;
-
-            if(atoms.length<MAX){
-
-                atoms.push({
-
-                    x:a.x,
-                    y:a.y,
-                    vx:4+Math.random()*2,
-                    vy:4+Math.random()*2,
-                    rot:0
-
-                });
-
-            }
-
-        }
-
-        x.save();
-
-        x.translate(a.x,a.y);
-        x.rotate(a.rot*Math.PI/180);
-
-        x.shadowColor="#66FFAA";
-        x.shadowBlur=10;
-
-        x.strokeStyle="#00FF99";
-        x.lineWidth=2;
-
-        x.beginPath();
-        x.ellipse(0,0,18,7,0,0,Math.PI*2);
-        x.stroke();
-
-        x.beginPath();
-        x.ellipse(0,0,7,18,0,0,Math.PI*2);
-        x.stroke();
-
-        x.fillStyle="#AAFF00";
-        x.beginPath();
-        x.arc(0,0,5,0,Math.PI*2);
-        x.fill();
-
-        x.restore();
-
-    }
-
-}
-
-function loop(){
-
-    requestAnimationFrame(loop);
-
-    bg();
+    drawBackground();
     drawStars();
     drawSun();
     drawBeam();
@@ -356,7 +363,7 @@ function loop(){
 
 }
 
-loop();
+animate();
 
 </script>
 
