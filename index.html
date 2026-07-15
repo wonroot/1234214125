@@ -352,3 +352,177 @@ animate();
 
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>과학시간</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#08163d;
+overflow:hidden;
+}
+
+#menu{
+position:absolute;
+left:50%;
+top:50%;
+transform:translate(-50%,-50%);
+text-align:center;
+}
+
+h1{
+color:white;
+font-size:55px;
+margin-bottom:40px;
+text-shadow:0 0 20px cyan;
+}
+
+button{
+cursor:pointer;
+}
+
+#startBtn{
+
+padding:18px 70px;
+font-size:32px;
+
+border:none;
+border-radius:15px;
+
+background:#1E88E5;
+color:white;
+
+transition:.3s;
+
+}
+
+#startBtn:hover{
+
+background:#1565C0;
+transform:scale(1.05);
+
+}
+
+#loading{
+
+display:none;
+
+color:white;
+
+font-size:40px;
+
+animation:blink 1s infinite;
+
+}
+
+#chapter{
+
+display:none;
+
+margin-top:30px;
+
+}
+
+.lesson{
+
+display:block;
+
+width:430px;
+
+margin:12px auto;
+
+padding:15px;
+
+font-size:24px;
+
+background:#2196F3;
+
+color:white;
+
+border:none;
+
+border-radius:12px;
+
+transition:.3s;
+
+}
+
+.lesson:hover{
+
+background:#1976D2;
+transform:scale(1.03);
+
+}
+
+@keyframes blink{
+
+50%{
+opacity:.3;
+}
+
+}
+</style>
+
+</head>
+
+<body>
+
+<div id="menu">
+
+<h1>과학시간!</h1>
+
+<button id="startBtn">시작</button>
+
+<div id="loading">
+로딩중...
+</div>
+
+<div id="chapter">
+
+<button class="lesson">1단원 - 과학이란?</button>
+<button class="lesson">2단원 - 물질의 상태 변화</button>
+<button class="lesson">3단원 - 분자의 운동</button>
+<button class="lesson">4단원 - 힘과 운동</button>
+<button class="lesson">5단원 - 생물의 다양성</button>
+<button class="lesson">6단원 - 지구계와 지권</button>
+
+</div>
+
+</div>
+
+<script>
+
+const startBtn=document.getElementById("startBtn");
+const loading=document.getElementById("loading");
+const chapter=document.getElementById("chapter");
+
+startBtn.onclick=function(){
+
+startBtn.style.display="none";
+
+loading.style.display="block";
+
+setTimeout(function(){
+
+loading.style.display="none";
+
+chapter.style.display="block";
+
+},2000);
+
+}
+
+</script>
+
+</body>
+</html>
