@@ -2,838 +2,724 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>과학시간!</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>우주 홈페이지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: #05040d;
+    overflow: hidden;
+    cursor: crosshair;
+  }
+  #space {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+  }
+  #intro-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+    z-index: 5;
+    transition: opacity 0.6s ease, filter 0.6s ease;
+  }
+  #intro-content.hide {
+    opacity: 0;
+    filter: blur(6px);
+    pointer-events: none;
+  }
+  #center-title {
+    text-align: center;
+    font-family: 'Orbitron', 'Segoe UI', sans-serif;
+    font-weight: 900;
+    letter-spacing: 0.35em;
+    font-size: clamp(28px, 6vw, 64px);
+    background: linear-gradient(90deg, #7f5cff, #4fc9ff, #ff6ad5, #7f5cff);
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 18px rgba(150, 110, 255, 0.65)) drop-shadow(0 0 34px rgba(80, 180, 255, 0.35));
+    animation: galaxyShift 6s ease-in-out infinite;
+    pointer-events: none;
+    user-select: none;
+    margin: 0;
+  }
+  #subtitle {
+    font-family: 'Share Tech Mono', 'Consolas', monospace;
+    letter-spacing: 0.5em;
+    font-size: clamp(11px, 1.6vw, 15px);
+    color: #6df3ff;
+    text-shadow: 0 0 10px rgba(109, 243, 255, 0.9), 0 0 22px rgba(109, 243, 255, 0.5);
+    pointer-events: none;
+    user-select: none;
+  }
+  #enter-btn {
+    margin-top: 10px;
+    padding: 14px 38px;
+    background: rgba(10, 8, 20, 0.55);
+    border: 1px solid #6df3ff;
+    color: #d9f9ff;
+    font-family: 'Share Tech Mono', 'Consolas', monospace;
+    font-size: 15px;
+    letter-spacing: 0.25em;
+    cursor: pointer;
+    clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+    box-shadow: 0 0 12px rgba(109, 243, 255, 0.55), inset 0 0 12px rgba(109, 243, 255, 0.15);
+    text-shadow: 0 0 8px rgba(109, 243, 255, 0.9);
+    transition: all 0.25s ease;
+  }
+  #enter-btn:hover {
+    background: rgba(109, 243, 255, 0.12);
+    border-color: #ff6ad5;
+    color: #fff;
+    box-shadow: 0 0 20px rgba(255, 106, 213, 0.75), inset 0 0 18px rgba(255, 106, 213, 0.25);
+    text-shadow: 0 0 10px rgba(255, 106, 213, 0.9);
+    letter-spacing: 0.32em;
+  }
+  #enter-btn:active {
+    transform: scale(0.96);
+  }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
+  @keyframes galaxyShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
 
-body{
-overflow:hidden;
-background:black;
-font-family:Arial,sans-serif;
-}
+  /* ---------- 메인 화면 (사이버펑크) ---------- */
+  #main-screen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at 50% 20%, #12082b 0%, #05030c 65%, #020106 100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.7s ease;
+    overflow: hidden;
+    z-index: 10;
+  }
+  #main-screen.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .grid-floor {
+    position: absolute;
+    left: -50%;
+    right: -50%;
+    bottom: 0;
+    height: 55%;
+    background-image:
+      linear-gradient(rgba(109, 243, 255, 0.35) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(109, 243, 255, 0.35) 1px, transparent 1px);
+    background-size: 60px 60px;
+    transform: perspective(320px) rotateX(62deg);
+    transform-origin: bottom;
+    mask-image: linear-gradient(to top, rgba(0,0,0,0.9), transparent 90%);
+    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.9), transparent 90%);
+    animation: gridScroll 2.4s linear infinite;
+  }
+  @keyframes gridScroll {
+    0%   { background-position: 0 0, 0 0; }
+    100% { background-position: 0 60px, 0 0; }
+  }
+  .scanlines {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.035) 0px,
+      rgba(255, 255, 255, 0.035) 1px,
+      transparent 2px,
+      transparent 4px
+    );
+    pointer-events: none;
+  }
+  .main-inner {
+    position: relative;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+  .main-eyebrow {
+    font-family: 'Share Tech Mono', monospace;
+    color: #ff6ad5;
+    letter-spacing: 0.4em;
+    font-size: 13px;
+    text-shadow: 0 0 10px rgba(255, 106, 213, 0.8);
+  }
+  .main-heading {
+    margin: 0;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: clamp(32px, 7vw, 72px);
+    letter-spacing: 0.12em;
+    color: #eafcff;
+    text-shadow:
+      0 0 8px rgba(109, 243, 255, 0.9),
+      2px 0 #ff6ad5,
+      -2px 0 #6df3ff;
+    animation: glitchText 4.5s infinite;
+  }
+  @keyframes glitchText {
+    0%, 92%, 100% { text-shadow: 0 0 8px rgba(109,243,255,0.9), 2px 0 #ff6ad5, -2px 0 #6df3ff; transform: translate(0,0); }
+    93% { text-shadow: 0 0 8px rgba(109,243,255,0.9), -3px 0 #ff6ad5, 3px 0 #6df3ff; transform: translate(-2px,1px); }
+    95% { text-shadow: 0 0 8px rgba(109,243,255,0.9), 3px 1px #ff6ad5, -3px -1px #6df3ff; transform: translate(2px,-1px); }
+    97% { transform: translate(0,0); }
+  }
+  .main-desc {
+    font-family: 'Share Tech Mono', monospace;
+    color: rgba(216, 244, 255, 0.7);
+    letter-spacing: 0.08em;
+    font-size: 14px;
+  }
+  #back-btn {
+    margin-top: 16px;
+    padding: 10px 26px;
+    background: transparent;
+    border: 1px solid rgba(109, 243, 255, 0.6);
+    color: #9fefff;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  #back-btn:hover {
+    border-color: #ff6ad5;
+    color: #ffd7f2;
+    box-shadow: 0 0 14px rgba(255, 106, 213, 0.5);
+  }
 
-canvas{
-position:fixed;
-left:0;
-top:0;
-}
-
-#menu{
-position:absolute;
-z-index:10;
-width:100%;
-height:100%;
-display:flex;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-color:white;
-}
-
-#title{
-font-size:45px;
-text-align:center;
-text-shadow:0 0 20px cyan;
-}
-
-#startBtn{
-
-margin-top:40px;
-
-padding:20px 70px;
-
-font-size:30px;
-
-border:0;
-
-border-radius:15px;
-
-background:#087cff;
-
-color:white;
-
-cursor:pointer;
-
-}
-
-
-#loading{
-
-display:none;
-
-font-size:40px;
-
-margin-top:30px;
-
-}
-
-
-#chapters{
-
-display:none;
-
-text-align:center;
-
-}
-
-
-.lesson{
-
-display:block;
-
-width:420px;
-
-margin:10px;
-
-padding:15px;
-
-font-size:25px;
-
-border:0;
-
-border-radius:10px;
-
-background:#087cff;
-
-color:white;
-
-}
-
+  #flash-overlay {
+    position: fixed;
+    inset: 0;
+    background: #eaf9ff;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 20;
+  }
+  #flash-overlay.flash-active {
+    animation: flashPulse 0.5s ease-out forwards;
+  }
+  @keyframes flashPulse {
+    0%   { opacity: 0.85; }
+    100% { opacity: 0; }
+  }
 </style>
-
 </head>
-
-
 <body>
-
-
 <canvas id="space"></canvas>
 
-
-<div id="menu">
-
-
-<div id="title">
-
-과학시간!<br>
-
-안녕하세요 이원근입니다 (-_-)
-
+<div id="intro-content">
+  <div id="center-title">SCIENCE</div>
+  <div id="subtitle">LAUNCH INTO SPACE</div>
+  <button id="enter-btn">우주로 떠나기</button>
 </div>
 
-
-<button id="startBtn">
-시작
-</button>
-
-
-<div id="loading">
-로딩중...
+<div id="main-screen">
+  <div class="grid-floor"></div>
+  <div class="scanlines"></div>
+  <div class="main-inner">
+    <div class="main-eyebrow">// SYSTEM ONLINE</div>
+    <h1 class="main-heading" data-text="MAIN SCREEN">MAIN SCREEN</h1>
+    <p class="main-desc">여기에 메인 화면 콘텐츠를 채워보세요.</p>
+    <button id="back-btn">← 돌아가기</button>
+  </div>
 </div>
 
-
-<div id="chapters">
-
-<h1>
-중학교 1학년 1학기 과학
-</h1>
-
-<button class="lesson">1단원 과학이란?</button>
-<button class="lesson">2단원 물질의 상태 변화</button>
-<button class="lesson">3단원 분자의 운동</button>
-<button class="lesson">4단원 힘과 운동</button>
-<button class="lesson">5단원 생물의 다양성</button>
-<button class="lesson">6단원 지구계와 지권</button>
-
-</div>
-
-
-</div>
-
+<div id="flash-overlay"></div>
 
 <script>
+const canvas = document.getElementById('space');
+const ctx = canvas.getContext('2d');
+let W, H;
 
-
-const space=document.getElementById("space");
-
-const ctx=space.getContext("2d");
-
-
-function resize(){
-
-space.width=innerWidth;
-
-space.height=innerHeight;
-
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
 }
-
 resize();
+window.addEventListener('resize', resize);
 
-window.addEventListener("resize",resize);
+// ---------- 배경 별(트윙클) ----------
+const bgStars = [];
+const BG_STAR_COUNT = 220;
+for (let i = 0; i < BG_STAR_COUNT; i++) {
+  bgStars.push({
+    x: Math.random(),
+    y: Math.random(),
+    r: Math.random() * 1.4 + 0.3,
+    phase: Math.random() * Math.PI * 2,
+    speed: 0.5 + Math.random() * 1.2
+  });
+}
 
+function drawNebula(t) {
+  // 배경 베이스
+  ctx.fillStyle = '#05040d';
+  ctx.fillRect(0, 0, W, H);
 
+  // 은은한 성운 그라디언트 두어 개
+  const g1 = ctx.createRadialGradient(W * 0.2, H * 0.15, 0, W * 0.2, H * 0.15, W * 0.6);
+  g1.addColorStop(0, 'rgba(120, 60, 200, 0.20)');
+  g1.addColorStop(1, 'rgba(120, 60, 200, 0)');
+  ctx.fillStyle = g1;
+  ctx.fillRect(0, 0, W, H);
 
-const stars=[];
+  const g2 = ctx.createRadialGradient(W * 0.8, H * 0.75, 0, W * 0.8, H * 0.75, W * 0.55);
+  g2.addColorStop(0, 'rgba(40, 90, 190, 0.18)');
+  g2.addColorStop(1, 'rgba(40, 90, 190, 0)');
+  ctx.fillStyle = g2;
+  ctx.fillRect(0, 0, W, H);
 
+  const g3 = ctx.createRadialGradient(W * 0.5, H * 0.9, 0, W * 0.5, H * 0.9, W * 0.5);
+  g3.addColorStop(0, 'rgba(200, 60, 140, 0.10)');
+  g3.addColorStop(1, 'rgba(200, 60, 140, 0)');
+  ctx.fillStyle = g3;
+  ctx.fillRect(0, 0, W, H);
+}
 
-for(let i=0;i<300;i++){
+function drawBgStars(t) {
+  for (const s of bgStars) {
+    const alpha = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(t * 0.001 * s.speed + s.phase));
+    ctx.beginPath();
+    ctx.fillStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
+    ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
 
-stars.push({
+// ---------- 유성 ----------
+const meteors = [];
+let meteorSpawnTimer = 0;
+let nextMeteorIn = 1500 + Math.random() * 2500;
 
-x:Math.random()*space.width,
+function spawnMeteor() {
+  const fromTop = Math.random() < 0.7;
+  const startX = fromTop ? Math.random() * W : -40;
+  const startY = fromTop ? -40 : Math.random() * H * 0.5;
+  const angle = (24 + Math.random() * 18) * Math.PI / 180; // 오른쪽 아래로 비스듬히
+  const speed = 620 + Math.random() * 380;
+  meteors.push({
+    x: startX,
+    y: startY,
+    vx: Math.cos(angle) * speed,
+    vy: Math.sin(angle) * speed,
+    len: 90 + Math.random() * 90,
+    life: 1
+  });
+}
 
-y:Math.random()*space.height,
+function updateAndDrawMeteors(dt) {
+  meteorSpawnTimer += dt;
+  if (meteorSpawnTimer >= nextMeteorIn) {
+    meteorSpawnTimer = 0;
+    nextMeteorIn = 1500 + Math.random() * 3000;
+    spawnMeteor();
+  }
 
-r:Math.random()*2
+  for (let i = meteors.length - 1; i >= 0; i--) {
+    const m = meteors[i];
+    m.x += (m.vx * dt) / 1000;
+    m.y += (m.vy * dt) / 1000;
 
+    const dirLen = Math.hypot(m.vx, m.vy) || 1;
+    const tailX = m.x - (m.vx / dirLen) * m.len;
+    const tailY = m.y - (m.vy / dirLen) * m.len;
+
+    ctx.save();
+    const grad = ctx.createLinearGradient(m.x, m.y, tailX, tailY);
+    grad.addColorStop(0, 'rgba(255,255,255,0.95)');
+    grad.addColorStop(0.4, 'rgba(190,220,255,0.55)');
+    grad.addColorStop(1, 'rgba(190,220,255,0)');
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 2;
+    ctx.shadowBlur = 14;
+    ctx.shadowColor = 'rgba(210,230,255,0.9)';
+    ctx.beginPath();
+    ctx.moveTo(m.x, m.y);
+    ctx.lineTo(tailX, tailY);
+    ctx.stroke();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(m.x, m.y, 1.8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    if (m.x - W * 0.15 > W || m.y - H * 0.15 > H) {
+      meteors.splice(i, 1);
+    }
+  }
+}
+
+// ---------- 좌측 상단 대각선 별 + 카운트다운 + 감마선 ----------
+const STAR_MARGIN = 80; // 화면 가장자리와의 최소 여백
+let starX = W * 0.12;
+let starY = H * 0.12;
+const STAR_POS = { x: () => starX, y: () => starY };
+const COUNTDOWN_SECONDS = 2;
+const STAR_FADE_IN_MS = 800; // 별이 등장할 때 옅었다가 진해지는 시간
+const BEAM_ANGLE = (38 * Math.PI) / 180; // 좌상단에서 우하단 대각선 방향
+const BEAM_SPEED = 1400; // px/sec
+
+let state = 'counting'; // counting -> bursting -> beaming -> fading -> counting(재시작)
+let stateTime = 0;      // 현재 state로 진입한 후 경과 시간(ms)
+let countdownValue = COUNTDOWN_SECONDS;
+let beam = null;
+
+// ---------- 감마선 옆으로 튀는 점(파티클) ----------
+const sideDots = [];
+const SIDE_DOT_MAX = 160;      // 성능 보호용 상한
+const SIDE_DOT_EMIT_MS = 90;   // 이 간격마다 감마선 옆에서 점 하나 생성
+const SIDE_DOT_LIFESPAN = 7000; // ms, 오래 지나면 서서히 소멸
+
+function spawnSideDot(x, y, baseAngle) {
+  const spread = (Math.random() - 0.5) * Math.PI * 0.9; // 감마선 진행방향 기준 옆으로 퍼짐
+  const angle = baseAngle + Math.PI / 2 * (Math.random() < 0.5 ? 1 : -1) + spread * 0.4;
+  const speed = 90 + Math.random() * 140;
+  sideDots.push({
+    x, y,
+    vx: Math.cos(angle) * speed,
+    vy: Math.sin(angle) * speed,
+    r: 2.4,
+    born: performance.now(),
+    hue: 265 + Math.random() * 40 // 보라~파랑 계열
+  });
+}
+
+function resetCycle() {
+  state = 'counting';
+  stateTime = 0;
+  countdownValue = COUNTDOWN_SECONDS;
+  beam = null;
+  starX = STAR_MARGIN + Math.random() * (W - STAR_MARGIN * 2);
+  starY = STAR_MARGIN + Math.random() * (H - STAR_MARGIN * 2);
+}
+resetCycle();
+
+function drawGlowStar(x, y, radius, color, glow) {
+  ctx.save();
+  ctx.shadowBlur = glow;
+  ctx.shadowColor = color;
+  ctx.beginPath();
+  ctx.fillStyle = color;
+  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.fill();
+
+  // 별 광선(네 방향 스파이크)
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.2;
+  ctx.globalAlpha = 0.7;
+  const spikes = radius * 4;
+  ctx.beginPath();
+  ctx.moveTo(x - spikes, y);
+  ctx.lineTo(x + spikes, y);
+  ctx.moveTo(x, y - spikes);
+  ctx.lineTo(x, y + spikes);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function updateAndDrawStarSystem(dt) {
+  const x = STAR_POS.x();
+  const y = STAR_POS.y();
+  stateTime += dt;
+
+  if (state === 'counting') {
+    const elapsedSec = stateTime / 1000;
+    countdownValue = Math.max(0, Math.ceil(COUNTDOWN_SECONDS - elapsedSec));
+    const pulse = 1 + 0.15 * Math.sin(stateTime * 0.01);
+    const fadeAlpha = Math.min(1, stateTime / STAR_FADE_IN_MS);
+
+    ctx.save();
+    ctx.globalAlpha = fadeAlpha;
+    drawGlowStar(x, y, 16 * pulse, '#fff6da', 45);
+
+    // 카운트다운 숫자
+    ctx.font = '600 28px Segoe UI, Pretendard, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.textAlign = 'left';
+    ctx.shadowBlur = 12;
+    ctx.shadowColor = '#fff6da';
+    ctx.fillText(countdownValue > 0 ? String(countdownValue) : '', x + 34, y - 26);
+    ctx.restore();
+
+    if (elapsedSec >= COUNTDOWN_SECONDS) {
+      state = 'bursting';
+      stateTime = 0;
+    }
+  } else if (state === 'bursting') {
+    const p = Math.min(1, stateTime / 260); // 0.26초 동안 폭발
+    const ringR = 6 + p * 70;
+    ctx.save();
+    ctx.globalAlpha = 1 - p;
+    ctx.strokeStyle = '#bfe9ff';
+    ctx.lineWidth = 3;
+    ctx.shadowBlur = 30;
+    ctx.shadowColor = '#8fd7ff';
+    ctx.beginPath();
+    ctx.arc(x, y, ringR, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+
+    // 별 자체는 급격히 밝아졌다 사라짐
+    drawGlowStar(x, y, 16 + p * 16, '#ffffff', 55 * (1 - p * 0.3));
+
+    if (p >= 1) {
+      state = 'beaming';
+      stateTime = 0;
+      beam = {
+        headDist: 0,
+        dirX: Math.cos(BEAM_ANGLE),
+        dirY: Math.sin(BEAM_ANGLE),
+        originX: x,
+        originY: y,
+        fadeAlpha: 1,
+        emitTimer: 0
+      };
+    }
+  } else if (state === 'beaming') {
+    beam.headDist += (BEAM_SPEED * dt) / 1000;
+
+    const maxDist = Math.hypot(W, H) * 1.1;
+    const headX = beam.originX + beam.dirX * beam.headDist;
+    const headY = beam.originY + beam.dirY * beam.headDist;
+
+    // 감마선이 진행하는 동안 옆으로 점을 계속 튀어나오게 함
+    beam.emitTimer += dt;
+    while (beam.emitTimer >= SIDE_DOT_EMIT_MS) {
+      beam.emitTimer -= SIDE_DOT_EMIT_MS;
+      if (sideDots.length < SIDE_DOT_MAX) {
+        spawnSideDot(headX, headY, BEAM_ANGLE);
+      }
+    }
+
+    // 감마선(빛나는 광선, 원점부터 head까지)
+    ctx.save();
+    ctx.globalAlpha = beam.fadeAlpha;
+    ctx.strokeStyle = '#d9b3ff';
+    ctx.shadowBlur = 35;
+    ctx.shadowColor = '#b98cff';
+    ctx.lineWidth = 3.2;
+    ctx.beginPath();
+    ctx.moveTo(beam.originX, beam.originY);
+    ctx.lineTo(headX, headY);
+    ctx.stroke();
+
+    // 코어(더 밝고 얇은 흰빛 라인)
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 1.1;
+    ctx.shadowBlur = 18;
+    ctx.beginPath();
+    ctx.moveTo(beam.originX, beam.originY);
+    ctx.lineTo(headX, headY);
+    ctx.stroke();
+
+    // 선단부 광점
+    drawGlowStar(headX, headY, 3.5, '#eaddff', 25);
+    ctx.restore();
+
+    if (beam.headDist >= maxDist) {
+      state = 'fading';
+      stateTime = 0;
+    }
+  } else if (state === 'fading') {
+    const p = Math.min(1, stateTime / 500);
+    beam.fadeAlpha = 1 - p;
+
+    const headX = beam.originX + beam.dirX * beam.headDist;
+    const headY = beam.originY + beam.dirY * beam.headDist;
+
+    ctx.save();
+    ctx.globalAlpha = beam.fadeAlpha;
+    ctx.strokeStyle = '#d9b3ff';
+    ctx.shadowBlur = 35;
+    ctx.shadowColor = '#b98cff';
+    ctx.lineWidth = 3.2;
+    ctx.beginPath();
+    ctx.moveTo(beam.originX, beam.originY);
+    ctx.lineTo(headX, headY);
+    ctx.stroke();
+    ctx.restore();
+
+    if (p >= 1) {
+      // 잠시 대기 후 재시작
+      if (stateTime > 500 + 1400) {
+        resetCycle();
+      }
+    }
+  }
+}
+
+function updateAndDrawSideDots(dt, now) {
+  const dtSec = dt / 1000;
+  const newlySpawned = [];
+  const RIPPLE_HIT_BAND = 14; // 파동 링 두께(이 안에 들어오면 맞은 것으로 처리)
+
+  for (let i = sideDots.length - 1; i >= 0; i--) {
+    const d = sideDots[i];
+
+    // 파동에 맞았는지 먼저 확인 - 맞으면 그대로 소멸
+    let hitByRipple = false;
+    for (const rp of ripples) {
+      const dist = Math.hypot(d.x - rp.x, d.y - rp.y);
+      if (Math.abs(dist - rp.r) < RIPPLE_HIT_BAND) {
+        hitByRipple = true;
+        break;
+      }
+    }
+    if (hitByRipple) {
+      sideDots.splice(i, 1);
+      continue;
+    }
+
+    d.x += d.vx * dtSec;
+    d.y += d.vy * dtSec;
+
+    let bounced = false;
+
+    if (d.x - d.r < 0) { d.x = d.r; d.vx *= -1; bounced = true; }
+    else if (d.x + d.r > W) { d.x = W - d.r; d.vx *= -1; bounced = true; }
+
+    if (d.y - d.r < 0) { d.y = d.r; d.vy *= -1; bounced = true; }
+    else if (d.y + d.r > H) { d.y = H - d.r; d.vy *= -1; bounced = true; }
+
+    if (bounced && sideDots.length + newlySpawned.length < SIDE_DOT_MAX) {
+      // 벽에 부딪히면 살짝 다른 방향으로 튀는 복제본을 하나 더 만들어 2배로 늘림
+      const jitter = (Math.random() - 0.5) * 0.9;
+      const cos = Math.cos(jitter), sin = Math.sin(jitter);
+      const nvx = d.vx * cos - d.vy * sin;
+      const nvy = d.vx * sin + d.vy * cos;
+      newlySpawned.push({
+        x: d.x, y: d.y,
+        vx: nvx, vy: nvy,
+        r: d.r,
+        born: now,
+        hue: d.hue + (Math.random() - 0.5) * 20
+      });
+    }
+
+    const age = now - d.born;
+    const life = 1 - age / SIDE_DOT_LIFESPAN;
+    if (life <= 0) {
+      sideDots.splice(i, 1);
+      continue;
+    }
+
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, Math.min(1, life));
+    ctx.fillStyle = `hsl(${d.hue}, 90%, 78%)`;
+    ctx.shadowBlur = 12;
+    ctx.shadowColor = `hsl(${d.hue}, 90%, 70%)`;
+    ctx.beginPath();
+    ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  if (newlySpawned.length) {
+    for (const nd of newlySpawned) sideDots.push(nd);
+  }
+}
+
+// ---------- 마우스 클릭 파동 효과 ----------
+const ripples = [];
+canvas.addEventListener('click', (e) => {
+  ripples.push({
+    x: e.clientX,
+    y: e.clientY,
+    r: 0,
+    alpha: 0.9
+  });
 });
 
+function updateAndDrawRipples(dt) {
+  for (let i = ripples.length - 1; i >= 0; i--) {
+    const rp = ripples[i];
+    rp.r += (dt / 1000) * 260;
+    rp.alpha -= dt / 1000 * 0.9;
+
+    if (rp.alpha <= 0) {
+      ripples.splice(i, 1);
+      continue;
+    }
+
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, rp.alpha);
+    ctx.strokeStyle = '#9fd8ff';
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = '#7ec8ff';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // 안쪽 보조 링
+    ctx.globalAlpha = Math.max(0, rp.alpha * 0.5);
+    ctx.beginPath();
+    ctx.arc(rp.x, rp.y, rp.r * 0.6, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
 }
 
+// ---------- 메인 루프 ----------
+let lastTime = performance.now();
+function loop(now) {
+  const dt = Math.min(50, now - lastTime); // dt 클램프(탭 전환 등 대비)
+  lastTime = now;
 
+  drawNebula(now);
+  drawBgStars(now);
+  updateAndDrawMeteors(dt);
+  updateAndDrawStarSystem(dt);
+  updateAndDrawSideDots(dt, now);
+  updateAndDrawRipples(dt);
 
-function drawSpace(){
-
-
-ctx.fillStyle="#000814";
-
-ctx.fillRect(
-0,
-0,
-space.width,
-space.height
-);
-
-
-
-for(let s of stars){
-
-ctx.fillStyle="white";
-
-ctx.beginPath();
-
-ctx.arc(
-s.x,
-s.y,
-s.r,
-0,
-Math.PI*2
-);
-
-ctx.fill();
-
+  requestAnimationFrame(loop);
 }
-
-
-}
-
-
-// Part 2에서 이어짐
-
-    // ==========================
-// Part 2
-// 태양 + 카운트다운 + 감마선 + 원자
-// ==========================
-
-
-const atoms=[];
-
-const MAX_ATOMS=300;
-
-
-const sun={
-
-x:120,
-
-y:120,
-
-r:45
-
-};
-
-
-let beam=false;
-
-let beamSize=0;
-
-
-
-// 카운트다운
-
-let count=5;
-
-
-const countTimer=setInterval(()=>{
-
-
-count--;
-
-
-if(count<=0){
-
-
-clearInterval(countTimer);
-
-
-beam=true;
-
-
-// 원자 6개 생성
-
-for(let i=0;i<6;i++){
-
-
-atoms.push({
-
-x:sun.x,
-
-y:sun.y,
-
-vx:5,
-
-vy:5,
-
-rot:0
-
-});
-
-
-}
-
-
-}
-
-
-},1000);
-
-
-
-
-// 태양 그리기
-
-function drawSun(){
-
-
-ctx.save();
-
-
-ctx.shadowColor="#ffd000";
-
-ctx.shadowBlur=70;
-
-
-ctx.fillStyle="#ffd83d";
-
-
-ctx.beginPath();
-
-
-ctx.arc(
-
-sun.x,
-
-sun.y,
-
-sun.r,
-
-0,
-
-Math.PI*2
-
-);
-
-
-ctx.fill();
-
-
-ctx.restore();
-
-
-}
-
-
-
-// 감마선
-
-function drawBeam(){
-
-
-if(!beam)return;
-
-
-beamSize+=15;
-
-
-ctx.save();
-
-
-ctx.lineCap="round";
-
-ctx.shadowBlur=80;
-
-ctx.shadowColor="#7b4cff";
-
-
-
-// 보라색
-
-ctx.strokeStyle="rgba(170,60,255,0.35)";
-
-ctx.lineWidth=90;
-
-
-ctx.beginPath();
-
-ctx.moveTo(
-
-sun.x,
-
-sun.y
-
-);
-
-ctx.lineTo(
-
-sun.x+beamSize,
-
-sun.y+beamSize
-
-);
-
-ctx.stroke();
-
-
-
-// 파란색
-
-ctx.strokeStyle="rgba(50,150,255,0.7)";
-
-ctx.lineWidth=45;
-
-
-ctx.beginPath();
-
-ctx.moveTo(
-
-sun.x,
-
-sun.y
-
-);
-
-ctx.lineTo(
-
-sun.x+beamSize,
-
-sun.y+beamSize
-
-);
-
-ctx.stroke();
-
-
-ctx.restore();
-
-
-}
-
-
-
-// 원자 움직임
-
-function drawAtoms(){
-
-
-for(let i=atoms.length-1;i>=0;i--){
-
-
-const a=atoms[i];
-
-
-a.x+=a.vx;
-
-a.y+=a.vy;
-
-
-let hit=false;
-
-
-
-// 벽 충돌
-
-if(a.x<10 || a.x>space.width-10){
-
-a.vx*=-1;
-
-hit=true;
-
-}
-
-
-if(a.y<10 || a.y>space.height-10){
-
-a.vy*=-1;
-
-hit=true;
-
-}
-
-
-
-
-// 벽 충돌시 원자 증가
-
-if(hit && atoms.length<MAX_ATOMS){
-
-
-atoms.push({
-
-x:a.x,
-
-y:a.y,
-
-vx:5,
-
-vy:5,
-
-rot:0
-
-});
-
-
-}
-
-
-
-
-// 원자 그림
-
-ctx.save();
-
-
-ctx.translate(a.x,a.y);
-
-
-ctx.rotate(a.rot);
-
-
-ctx.strokeStyle="#00ff99";
-
-ctx.lineWidth=3;
-
-
-
-ctx.beginPath();
-
-ctx.ellipse(
-
-0,
-
-0,
-
-18,
-
-8,
-
-0,
-
-0,
-
-Math.PI*2
-
-);
-
-ctx.stroke();
-
-
-
-ctx.fillStyle="#aaff00";
-
-
-ctx.beginPath();
-
-ctx.arc(
-
-0,
-
-0,
-
-5,
-
-0,
-
-Math.PI*2
-
-);
-
-ctx.fill();
-
-
-ctx.restore();
-
-
-}
-
-}
-
-
-// Part 3에서 이어짐
-
-    // ==========================
-// Part 3
-// 파동 + 시작버튼 + 최종 실행
-// ==========================
-
-
-const waves=[];
-
-
-// 클릭 파동
-
-space.addEventListener("click",e=>{
-
-
-waves.push({
-
-x:e.clientX,
-
-y:e.clientY,
-
-r:0,
-
-a:1
-
-});
-
-
-});
-
-
-
-
-// 파동 그리기 + 원자 반응
-
-function drawWaves(){
-
-
-for(let i=waves.length-1;i>=0;i--){
-
-
-const w=waves[i];
-
-
-w.r+=10;
-
-w.a-=0.02;
-
-
-
-ctx.beginPath();
-
-
-ctx.arc(
-
-w.x,
-
-w.y,
-
-w.r,
-
-0,
-
-Math.PI*2
-
-);
-
-
-ctx.lineWidth=8;
-
-
-ctx.strokeStyle=
-
-`rgba(50,180,255,${w.a})`;
-
-
-ctx.shadowColor="#00aaff";
-
-ctx.shadowBlur=30;
-
-
-ctx.stroke();
-
-
-
-
-
-// 원자 충돌
-
-for(let j=atoms.length-1;j>=0;j--){
-
-
-const a=atoms[j];
-
-
-const d=Math.hypot(
-
-a.x-w.x,
-
-a.y-w.y
-
-);
-
-
-
-if(Math.abs(d-w.r)<15){
-
-
-
-// 80% 삭제
-
-if(Math.random()<0.8){
-
-
-atoms.splice(j,1);
-
-
-}
-
-
-// 20% 방향 변경
-
-else{
-
-
-const angle=Math.random()*Math.PI*2;
-
-
-a.vx=Math.cos(angle)*5;
-
-a.vy=Math.sin(angle)*5;
-
-
-}
-
-
-}
-
-
-}
-
-
-
-if(w.a<=0){
-
-waves.splice(i,1);
-
-}
-
-
-}
-
-
-}
-
-
-
-
-// 시작 버튼
-
-const startBtn=document.getElementById("startBtn");
-
-const loading=document.getElementById("loading");
-
-const chapters=document.getElementById("chapters");
-
-
-let running=true;
-
-
-
-startBtn.onclick=()=>{
-
-
-startBtn.style.display="none";
-
-
-loading.style.display="block";
-
-
-
-setTimeout(()=>{
-
-
-// 우주 정지
-
-running=false;
-
-
-// 화면 제거
-
-space.style.display="none";
-
-
-
-// 메뉴 변경
-
-document.getElementById("title").style.display="none";
-
-
-loading.style.display="none";
-
-
-chapters.style.display="block";
-
-
-},2000);
-
-
-};
-
-
-
-
-// 최종 애니메이션
-
-function mainLoop(){
-
-
-if(running){
-
-
-drawSpace();
-
-
-drawSun();
-
-
-drawBeam();
-
-
-drawAtoms();
-
-
-drawWaves();
-
-
-}
-
-
-requestAnimationFrame(mainLoop);
-
-
-}
-
-
-mainLoop();
-
-
+requestAnimationFrame(loop);
 </script>
 
+<script>
+// ---------- 화면 전환 (인트로 -> 메인화면) ----------
+const introContent = document.getElementById('intro-content');
+const mainScreen = document.getElementById('main-screen');
+const flashOverlay = document.getElementById('flash-overlay');
+const enterBtn = document.getElementById('enter-btn');
+const backBtn = document.getElementById('back-btn');
+
+enterBtn.addEventListener('click', () => {
+  introContent.classList.add('hide');
+  flashOverlay.classList.remove('flash-active');
+  void flashOverlay.offsetWidth; // 애니메이션 재시작을 위한 리플로우
+  flashOverlay.classList.add('flash-active');
+  setTimeout(() => {
+    mainScreen.classList.add('show');
+  }, 250);
+});
+
+backBtn.addEventListener('click', () => {
+  mainScreen.classList.remove('show');
+  introContent.classList.remove('hide');
+});
+</script>
 </body>
 </html>
