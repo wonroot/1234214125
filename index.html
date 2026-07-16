@@ -103,8 +103,9 @@
     position: fixed;
     inset: 0;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
+    padding-top: 8vh;
     background: radial-gradient(ellipse at 50% 20%, #12082b 0%, #05030c 65%, #020106 100%);
     opacity: 0;
     pointer-events: none;
@@ -148,6 +149,75 @@
     );
     pointer-events: none;
   }
+  .side-panel {
+    position: absolute;
+    left: 3.5vw;
+    top: 50%;
+    transform: translateY(-50%);
+    width: clamp(230px, 20vw, 300px);
+    padding: 20px 18px;
+    background: rgba(8, 6, 18, 0.55);
+    border: 1px solid rgba(109, 243, 255, 0.45);
+    box-shadow: 0 0 18px rgba(109, 243, 255, 0.2), inset 0 0 18px rgba(109, 243, 255, 0.08);
+    clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+    font-family: 'Share Tech Mono', monospace;
+    z-index: 2;
+  }
+  .side-panel-title {
+    color: #ff6ad5;
+    font-size: 13px;
+    letter-spacing: 0.3em;
+    text-shadow: 0 0 8px rgba(255, 106, 213, 0.8);
+    margin-bottom: 16px;
+  }
+  .side-panel-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .side-panel-menu li {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 10px 10px;
+    border-left: 2px solid rgba(109, 243, 255, 0.25);
+    color: rgba(216, 244, 255, 0.6);
+    font-size: 12.5px;
+    letter-spacing: 0.03em;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .side-panel-menu li:hover {
+    border-left-color: #6df3ff;
+    background: rgba(109, 243, 255, 0.08);
+    color: #eafcff;
+  }
+  .side-panel-menu li.active {
+    border-left-color: #ff6ad5;
+    background: rgba(255, 106, 213, 0.1);
+    color: #ffffff;
+  }
+  .side-panel-menu li.active .unit-roman {
+    color: #ff6ad5;
+    text-shadow: 0 0 8px rgba(255, 106, 213, 0.85);
+  }
+  .unit-roman {
+    flex-shrink: 0;
+    width: 26px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: #6df3ff;
+    text-shadow: 0 0 6px rgba(109, 243, 255, 0.7);
+  }
+  .unit-name {
+    flex: 1;
+  }
+
   .main-inner {
     position: relative;
     text-align: center;
@@ -181,6 +251,53 @@
     93% { text-shadow: 0 0 8px rgba(109,243,255,0.9), -3px 0 #ff6ad5, 3px 0 #6df3ff; transform: translate(-2px,1px); }
     95% { text-shadow: 0 0 8px rgba(109,243,255,0.9), 3px 1px #ff6ad5, -3px -1px #6df3ff; transform: translate(2px,-1px); }
     97% { transform: translate(0,0); }
+  }
+  .main-heading.glitch-burst {
+    animation: glitchBurst 0.5s steps(1, end) 1 !important;
+  }
+  @keyframes glitchBurst {
+    0%   { transform: translate(0,0) skewX(0); text-shadow: 0 0 8px rgba(109,243,255,0.9), 2px 0 #ff6ad5, -2px 0 #6df3ff; opacity: 1; }
+    6%   { transform: translate(-10px,3px) skewX(10deg); text-shadow: 6px 0 #ff2bd6, -6px 0 #2bf0ff; opacity: 0.75; }
+    12%  { transform: translate(9px,-4px) skewX(-8deg); text-shadow: -7px 1px #ff2bd6, 7px -1px #2bf0ff; opacity: 1; }
+    18%  { transform: translate(-7px,5px); text-shadow: 5px 3px #ff2bd6, -5px -3px #2bf0ff; opacity: 0.5; }
+    24%  { transform: translate(8px,-3px) skewX(9deg); text-shadow: -6px 0 #2bf0ff, 6px 0 #ff2bd6; opacity: 1; }
+    30%  { transform: translate(-4px,2px) skewX(-6deg); opacity: 0.8; }
+    36%  { transform: translate(6px,-5px); text-shadow: 8px 0 #ff2bd6, -8px 0 #2bf0ff; opacity: 0.4; }
+    42%  { transform: translate(-9px,4px) skewX(7deg); opacity: 1; }
+    50%  { transform: translate(3px,-2px); text-shadow: -4px 2px #2bf0ff, 4px -2px #ff2bd6; opacity: 0.7; }
+    58%  { transform: translate(-6px,3px) skewX(-9deg); opacity: 1; }
+    66%  { transform: translate(5px,-4px); text-shadow: 6px -1px #ff2bd6, -6px 1px #2bf0ff; opacity: 0.55; }
+    74%  { transform: translate(-3px,2px) skewX(5deg); opacity: 1; }
+    82%  { transform: translate(4px,-2px); text-shadow: -3px 0 #2bf0ff, 3px 0 #ff6ad5; opacity: 0.85; }
+    90%  { transform: translate(-2px,1px); opacity: 1; }
+    100% { transform: translate(0,0) skewX(0); text-shadow: 0 0 8px rgba(109,243,255,0.9), 2px 0 #ff6ad5, -2px 0 #6df3ff; opacity: 1; }
+  }
+  .main-inner.shake {
+    animation: screenShake 0.5s linear 1;
+  }
+  @keyframes screenShake {
+    0%, 100% { transform: translate(0,0); }
+    10% { transform: translate(-5px,3px); }
+    20% { transform: translate(6px,-4px); }
+    30% { transform: translate(-7px,-2px); }
+    40% { transform: translate(5px,4px); }
+    50% { transform: translate(-4px,-5px); }
+    60% { transform: translate(6px,2px); }
+    70% { transform: translate(-3px,-4px); }
+    80% { transform: translate(4px,3px); }
+    90% { transform: translate(-2px,1px); }
+  }
+  .scanlines.glitch-flicker {
+    animation: noiseFlicker 0.5s steps(4, end) 1;
+  }
+  @keyframes noiseFlicker {
+    0%, 100% { opacity: 1; }
+    15% { opacity: 0.15; background-color: rgba(109,243,255,0.06); }
+    30% { opacity: 1; background-color: transparent; }
+    45% { opacity: 0.1; background-color: rgba(255,106,213,0.08); }
+    60% { opacity: 0.9; background-color: transparent; }
+    75% { opacity: 0.2; }
+    90% { opacity: 1; }
   }
   .main-desc {
     font-family: 'Share Tech Mono', monospace;
@@ -229,12 +346,24 @@
 <div id="intro-content">
   <div id="center-title">SCIENCE</div>
   <div id="subtitle">LAUNCH INTO SPACE</div>
-  <button id="enter-btn">우주로 떠나기</button>
+  <button id="enter-btn">LAUNCH INTO SPACE</button>
 </div>
 
 <div id="main-screen">
   <div class="grid-floor"></div>
   <div class="scanlines"></div>
+  <div class="side-panel">
+    <div class="side-panel-title">UNIT SELECT</div>
+    <ul class="side-panel-menu" id="unit-menu">
+      <li data-roman="I" data-title="과학과 인류의 지속가능한 삶"><span class="unit-roman">I</span><span class="unit-name">과학과 인류의 지속가능한 삶</span></li>
+      <li data-roman="II" data-title="생물의 구성과 다양성"><span class="unit-roman">II</span><span class="unit-name">생물의 구성과 다양성</span></li>
+      <li data-roman="III" data-title="열"><span class="unit-roman">III</span><span class="unit-name">열</span></li>
+      <li data-roman="IV" data-title="물질의 상태의 변화"><span class="unit-roman">IV</span><span class="unit-name">물질의 상태의 변화</span></li>
+      <li data-roman="V" data-title="힘의 작용"><span class="unit-roman">V</span><span class="unit-name">힘의 작용</span></li>
+      <li data-roman="VI" data-title="기체의 성질"><span class="unit-roman">VI</span><span class="unit-name">기체의 성질</span></li>
+      <li data-roman="VII" data-title="태양계"><span class="unit-roman">VII</span><span class="unit-name">태양계</span></li>
+    </ul>
+  </div>
   <div class="main-inner">
     <div class="main-eyebrow">// SYSTEM ONLINE</div>
     <h1 class="main-heading" data-text="MAIN SCREEN">MAIN SCREEN</h1>
@@ -720,6 +849,46 @@ backBtn.addEventListener('click', () => {
   mainScreen.classList.remove('show');
   introContent.classList.remove('hide');
 });
+
+// ---------- 단원 선택 메뉴 ----------
+const unitItems = document.querySelectorAll('#unit-menu li');
+const mainHeading = document.querySelector('.main-heading');
+const mainEyebrow = document.querySelector('.main-eyebrow');
+
+unitItems.forEach((item) => {
+  item.addEventListener('click', () => {
+    unitItems.forEach((el) => el.classList.remove('active'));
+    item.classList.add('active');
+
+    const title = item.dataset.title;
+    const roman = item.dataset.roman;
+
+    mainHeading.textContent = title;
+    mainHeading.setAttribute('data-text', title);
+    mainEyebrow.textContent = `// UNIT ${roman} SELECTED`;
+
+    triggerGlitchBurst();
+  });
+});
+
+const mainInner = document.querySelector('.main-inner');
+const scanlinesEl = document.querySelector('.scanlines');
+
+function triggerGlitchBurst() {
+  mainHeading.classList.remove('glitch-burst');
+  mainInner.classList.remove('shake');
+  scanlinesEl.classList.remove('glitch-flicker');
+  void mainHeading.offsetWidth; // 리플로우로 애니메이션 재시작
+  mainHeading.classList.add('glitch-burst');
+  mainInner.classList.add('shake');
+  scanlinesEl.classList.add('glitch-flicker');
+
+  setTimeout(() => {
+    mainHeading.classList.remove('glitch-burst');
+    mainInner.classList.remove('shake');
+    scanlinesEl.classList.remove('glitch-flicker');
+  }, 520);
+}
 </script>
 </body>
 </html>
